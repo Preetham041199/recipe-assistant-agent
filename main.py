@@ -25,7 +25,7 @@ def initialize_state(user_input):
     }
 
 # 2. Initialize Gemini LLM
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDvFU7spBHxbnXhyB_Ys-QdsTItEem1kEk"
+os.environ["GOOGLE_API_KEY"] = "your-api-key"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 llm = genai.GenerativeModel("gemini-1.5-pro")
 
@@ -75,18 +75,18 @@ def recipe_finder(state):
 def instruction_fetcher(state):
     recipe = state.get("last_recipe")
     if not recipe:
-        state["response"] = "🤔 Please tell me the ingredients or a dish name first."
+        state["response"] = "Please tell me the ingredients or a dish name first."
         return state
     prompt = f"""How do I cook {recipe}? Provide step-by-step instructions in simple language."""
     result = gemini_generate(prompt)
-    state["response"] = f"📋 {result}"
+    state["response"] = f"{result}"
     return state
 
 def pairing_advisor(state):
     recipe = state.get("last_recipe") or "an Indian dish"
     prompt = f"""Suggest a drink or side dish to pair with {recipe}. Explain briefly why it pairs well."""
     result = gemini_generate(prompt)
-    state["response"] = f"🍷 {result}"
+    state["response"] = f"{result}"
     return state
 
 def followup_resolver(state):
@@ -94,14 +94,14 @@ def followup_resolver(state):
     last_recipe = state.get("last_recipe")
 
     if not last_recipe:
-        state["response"] = "🤖 Please clarify. Ask about recipes, instructions, or pairings."
+        state["response"] = "Please clarify. Ask about recipes, instructions, or pairings."
         return state
 
     prompt = f"""
 You are a helpful cooking assistant. The user previously got the dish: "{last_recipe}". Now they asked: "{user_input}". Based on this, give a helpful and conversational response related to the previous context.
 """
     response = gemini_generate(prompt)
-    state["response"] = f"💡 {response}"
+    state["response"] = f"{response}"
     return state
 
 def response_generator(state):
@@ -139,13 +139,13 @@ recipe_graph = builder.compile()
 
 # 8. Execution
 if __name__ == "__main__":
-    print("🍳 Recipe Agent Ready!")
+    print("Recipe Agent Ready!")
     state = initialize_state("")
 
     while True:
-        user_query = input("\n👤 You: ")
+        user_query = input("\nYou: ")
         if user_query.lower() in ["quit", "exit"]:
-            print("👋 Goodbye!")
+            print("Goodbye!")
             break
         if user_query.strip():
             state["user_input"] = user_query
@@ -156,4 +156,4 @@ if __name__ == "__main__":
             state["last_ingredients"] = final_state.get("last_ingredients", state.get("last_ingredients"))
             state["memory"] = final_state.get("memory", state.get("memory"))
 
-            print("\n💬", final_state["response"])
+            print("\n", final_state["response"])
